@@ -3,8 +3,9 @@ import {defineConfig} from "vitepress";
 import {withMermaid} from "vitepress-plugin-mermaid";
 import {gen_catelog, gen_nav} from "./utils/auto_gen_sidebar.mjs";
 // https://vitepress.dev/reference/site-config
-const nav: Array<any> = gen_nav("./");
-nav.push({text: "首页", link: "./"})
+const nav=[{text: "首页", link: "./"}]
+const _nav: Array<any> = gen_nav("./");
+nav.push(..._nav)
 const config = defineConfig({
     base: "/mhr-app-docs/",
     markdown: {
