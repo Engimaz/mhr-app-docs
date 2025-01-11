@@ -3,8 +3,8 @@ import { defineConfig } from "vitepress";
 import { withMermaid } from "vitepress-plugin-mermaid";
 import { gen_catelog, gen_nav } from "./utils/auto_gen_sidebar.mjs";
 // https://vitepress.dev/reference/site-config
-const nav:Array<any> = gen_nav("/");
-nav.push({ text: "首页", link: "/" })
+const nav:Array<any> = gen_nav("./");
+nav.push({ text: "首页", link: "./" })
 const config = defineConfig({
   markdown: {
     config: (md) => {
@@ -18,7 +18,7 @@ const config = defineConfig({
 
     // https://vitepress.dev/reference/default-theme-config
     nav:nav,
-    sidebar: gen_catelog("/"),
+    sidebar: gen_catelog("./"),
     socialLinks: [
       { icon: "github", link: "https://github.com/vuejs/vitepress" },
     ],

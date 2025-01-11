@@ -9,6 +9,7 @@ const WHITE_LIST = [
   "node_modules",
   ".idea",
   ".git",
+  ".github",
   "assets",
 ];
 
