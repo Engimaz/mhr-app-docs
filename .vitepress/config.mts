@@ -6,6 +6,7 @@ import { gen_catelog, gen_nav } from "./utils/auto_gen_sidebar.mjs";
 const nav:Array<any> = gen_nav("./");
 nav.push({ text: "首页", link: "./" })
 const config = defineConfig({
+  base: "/mhr-app-docs/",
   markdown: {
     config: (md) => {
       md.use(markdownItTextualUml);
