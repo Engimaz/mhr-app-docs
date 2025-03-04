@@ -71,6 +71,7 @@ CREATE TABLE t_account_roles
 
 CREATE TABLE t_account_tenants
 (
+    id        bigint   NOT NULL AUTO_INCREMENT COMMENT '主键',
     account_id  BIGINT   NOT NULL COMMENT '账号ID',
     tenant_id   BIGINT   NOT NULL COMMENT '租户ID',
     is_primary  BOOLEAN           DEFAULT FALSE COMMENT '是否主租户',
@@ -78,7 +79,8 @@ CREATE TABLE t_account_tenants
     update_time datetime NOT NULL COMMENT '更新时间',
     version     INT      NOT NULL DEFAULT '0' COMMENT '版本号',
     is_deleted  tinyint  NOT NULL DEFAULT '0' COMMENT '逻辑删除 0 未删除 1 已删除',
-    PRIMARY KEY (account_id, tenant_id)
+    PRIMARY KEY (id),
+    unique key (account_id, tenant_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '账号租户关联表 该表可实现账号租户多对多关联';
 
 CREATE TABLE t_member

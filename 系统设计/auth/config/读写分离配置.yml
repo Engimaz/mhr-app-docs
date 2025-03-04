@@ -1,0 +1,10 @@
+mybatis-flex:
+  datasource:
+    master:
+      url: jdbc:mysql://mysql-primary.mysql.svc.cluster.local:3306/auth-server
+      username: root
+      password: 123456
+    slave1:
+      url: jdbc:mysql://mysql-secondary.mysql.svc.cluster.local:3306/auth-server
+      username: root
+      password: 123456
