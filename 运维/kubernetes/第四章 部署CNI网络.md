@@ -22,6 +22,15 @@ grep image calico.yaml
    docker.io/calico -> registry.cn-hangzhou.aliyuncs.com/mhr
 ```
 
+## 提前安装一些镜像
+
+```shell
+docker login --username=马海荣 registry.cn-hangzhou.aliyuncs.com
+docker pull registry.cn-hangzhou.aliyuncs.com/mhr/cni:v3.25.0
+docker pull registry.cn-hangzhou.aliyuncs.com/mhr/node:v3.25.0
+docker pull registry.cn-hangzhou.aliyuncs.com/mhr/kube-controllers:v3.25.0
+```
+
 ## 创建私钥
 
 ```shell

@@ -26,6 +26,7 @@ EOF
 cat > /etc/sysctl.d/k8s.conf << EOF
 net.bridge.bridge-nf-call-ip6tables = 1
 net.bridge.bridge-nf-call-iptables = 1
+net.ipv4.ip_forward = 1
 EOF
 ```
 
@@ -80,7 +81,7 @@ EOF
 yum install -y kubelet-1.23.6 kubeadm-1.23.6 kubectl-1.23.6
 ```
 
-### 配置开机自启动
+### 所有节点配置开机自启动
 
 ```shell
 systemctl enable kubelet
@@ -133,8 +134,8 @@ openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outfor
 ### 启动成功 其他节点执行该命令加入集群
 
 ```shell
-kubeadm join 192.168.3.100:6443 --token ucnqxr.63fcjh42a0svyj99 \
-        --discovery-token-ca-cert-hash sha256:a6f059538fa32250c8f1c12e125b46198edeb706fa6e3d973c206c48be61fd46 
+kubeadm join 192.168.3.100:6443 --token scnixz.s0qfauxs6jabp0vw \
+ --discovery-token-ca-cert-hash sha256:203c9f0abb5a9bf1807fb72a6968c9f35f1059aa3114ab592030abe6a688ad70
 ```
 
 ### 在任意节点使用kubectl
@@ -156,4 +157,17 @@ scp /etc/kubernetes/admin.conf root@k8s-node-1:/etc/kubernetes
 
 ```shell
 kubeadm reset
+```
+
+## 重新生成kubectl的配置文件
+
+```shell
+kubeadm init phase kubelet-start
+kubeadm init phase kubeconfig all
+```
+
+## 重新生成证书文件
+
+```shell
+kubeadm init phase certs all
 ```

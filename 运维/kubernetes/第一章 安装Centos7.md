@@ -36,6 +36,12 @@ yum clean all
 yum makecache
 ```
 
+## 更新软件
+
+```shell
+yum update -y
+```
+
 ## 检查ssh环境是否安装
 
 ```shell
@@ -71,6 +77,32 @@ sudo service firewalld restart
 
 ```shell
 systemctl disable firewalld 
+```
+
+## 启用Iptables
+
+```shell
+yum install -y iptables-services
+systemctl start iptables
+iptables -F
+systemctl enable iptables
+service iptables save
+```
+
+### 安装ipvs
+
+```shell
+yum -y install ipset ipvsadm
+
+cat <<EOF > /etc/sysconfig/modules/ipvs.modules
+#!/bin/bash
+modprobe -- ip_vs
+modprobe -- ip_vs_rr
+modprobe -- ip_vs_wrr
+modprobe -- ip_vs_sh
+modprobe -- nf_conntrack
+EOF
+chmod 755 /etc/sysconfig/modules/ipvs.modules && bash /etc/sysconfig/modules/ipvs.modules
 ```
 
 ### 公钥写入服务器

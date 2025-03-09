@@ -3,9 +3,7 @@
 ## 下载docker依赖工具
 
 ```shell
-yum install -y yum-utils \
-           device-mapper-persistent-data \
-           lvm2 --skip-broken
+yum install -y yum-utils      device-mapper-persistent-data        lvm2 --skip-broken
 ```
 
 ## 配置docker镜像源
@@ -25,8 +23,6 @@ sudo sed -i 's+download.docker.com+mirrors.huaweicloud.com/docker-ce+' /etc/yum.
 ```shell
 sudo yum makecache fast
 ```
-
-
 
 ## 安装docker
 
@@ -71,3 +67,5 @@ docker --version
 ```
 
 > Docker version 26.1.4, build 5650f9b
+
+# 
