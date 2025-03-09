@@ -81,13 +81,6 @@ EOF
 yum install -y kubelet-1.23.6 kubeadm-1.23.6 kubectl-1.23.6
 ```
 
-### 所有节点配置开机自启动
-
-```shell
-systemctl enable kubelet
-systemctl start kubelet
-```
-
 ### master启动k8s
 
 ```shell
@@ -112,6 +105,15 @@ journalctl -xefu kubelet
   sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
   sudo chown $(id -u):$(id -g) $HOME/.kube/config
 ```
+
+## master配置开机自启动
+
+```shell
+systemctl enable kubelet
+systemctl start kubelet
+```
+
+
 
 ### token 过期创建token
 

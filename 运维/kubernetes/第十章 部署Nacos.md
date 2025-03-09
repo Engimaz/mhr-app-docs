@@ -150,8 +150,6 @@ spec:
   selector:
     matchLabels:
       app: nacos
-
-
 ```
 
 ## 执行安装命令
@@ -160,5 +158,3 @@ spec:
 kubectl create ns nacos
 kubectl apply -f nacos.yaml 
 ```
-
-
