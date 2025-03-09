@@ -81,13 +81,6 @@ EOF
 yum install -y kubelet-1.23.6 kubeadm-1.23.6 kubectl-1.23.6
 ```
 
-### 所有节点配置开机自启动
-
-```shell
-systemctl enable kubelet
-systemctl start kubelet
-```
-
 ### master启动k8s
 
 ```shell
@@ -111,6 +104,13 @@ journalctl -xefu kubelet
   mkdir -p $HOME/.kube
   sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
   sudo chown $(id -u):$(id -g) $HOME/.kube/config
+```
+
+## master配置开机自启动
+
+```shell
+systemctl enable kubelet
+systemctl start kubelet
 ```
 
 ### token 过期创建token
@@ -137,6 +137,14 @@ openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outfor
 kubeadm join 192.168.3.100:6443 --token scnixz.s0qfauxs6jabp0vw \
  --discovery-token-ca-cert-hash sha256:203c9f0abb5a9bf1807fb72a6968c9f35f1059aa3114ab592030abe6a688ad70
 ```
+
+### 显示加入节点命令
+
+```yml
+
+```
+
+
 
 ### 在任意节点使用kubectl
 

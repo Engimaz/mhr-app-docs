@@ -1,15 +1,32 @@
 # 第六章 安装Helm
 
-## 下载helm并解压
+## 下载helm
+
+```yaml
+wget https://get.helm.sh/helm-v3.17.0-linux-amd64.tar.gz
+```
+
+## 解压helm 并移动到指定位置
 
 ```shell
 tar -zxvf helm-v3.17.0-linux-amd64.tar.gz 
 ```
 
-## 移动可执行文件到bin
+```shell
+ cp helm /usr/local/bin/helm
+```
+
+## 添加镜像地址
 
 ```shell
-cp helm /usr/local/bin/helm
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo add aliyun https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts
+```
+
+## 搜索仓库
+
+```shell
+helm search repo redi
 ```
 
 ## 版本检验

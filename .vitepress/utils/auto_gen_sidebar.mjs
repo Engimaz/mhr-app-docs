@@ -1,7 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
+
 // 文件根目录
 const DIR_PATH = path.resolve();
+
 // 白名单,过滤不是文章的文件和文件夹
 const WHITE_LIST = [
     "index.md",
@@ -21,6 +23,11 @@ const isDirectory = (path) => fs.lstatSync(path).isDirectory();
 // 取差值
 const intersections = (arr1, arr2) =>
     Array.from(new Set(arr1.filter((item) => !new Set(arr2).has(item))));
+
+// 对数组按中文名称排序
+const sortByName = (arr) => {
+    return arr.sort((a, b) => a.text.localeCompare(b.text, "zh-CN"));
+};
 
 // 把方法导出直接使用
 function getList(params, path1, pathname) {
@@ -57,7 +64,8 @@ function getList(params, path1, pathname) {
     res.map((item) => {
         item.text = item.text.replace(/\.md$/, "");
     });
-    return res;
+    // 对结果按中文名称排序
+    return sortByName(res);
 }
 
 // 把方法导出直接使用
@@ -78,8 +86,8 @@ const getSendNav = (pathname) => {
             });
         }
     }
-
-    return res;
+    // 对结果按中文名称排序
+    return sortByName(res);
 };
 
 const set_sidebar = (pathname) => {
@@ -135,5 +143,6 @@ export const gen_nav = (pathname) => {
             items: getSendNav(dir),
         };
     });
-    return res;
+    // 对结果按中文名称排序
+    return sortByName(res);
 };
