@@ -141,7 +141,7 @@ kubeadm join 192.168.3.100:6443 --token scnixz.s0qfauxs6jabp0vw \
 ### 显示加入节点命令
 
 ```yml
-
+kubeadm token create --print-join-command
 ```
 
 
