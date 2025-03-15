@@ -1,0 +1,1112 @@
+@startuml
+!include ../../puml/lib_eventstorming.puml
+actor 用户 as User
+System("System")[
+    系统
+    --
+]
+
+
+Timer("Timer")[
+    定时任务
+    --
+]
+
+Aggregate("CompanyAggregate")[
+    公司聚合
+    --
+    公司ID
+    --
+]
+
+Aggregate("PermissionAggregate")[
+    权限聚合
+    --
+    权限ID
+]
+
+Aggregate("SystemAggregate")[
+    系统聚合
+    --
+    系统ID
+]
+
+Aggregate("RoleAggregate")[
+    角色聚合
+    --
+    角色ID
+    公司ID
+]
+
+Service("CompanyService")[
+    公司服务
+    --
+]
+
+DomainEvent("UserLoginAttemptFailed")[
+    用户登录尝试失败
+    --
+    用户ID
+]
+
+
+DomainEvent("UserLockedDueToFailedAttemptsEvt")[
+    用户因多次登录失败而被锁定
+    --
+    用户ID
+]
+
+DomainEvent("UserUnlockedByAdminEvt")[
+    用户被管理员解锁
+    --
+    用户ID
+]
+Command("UnlockUserCommand")[
+    解锁用户
+    --
+    用户ID
+]
+
+System -down-> UnlockUserCommand
+
+Command("UserApprovalQuitCompanyCommand")[
+    退出公司审批列表
+    --
+    用户ID
+    目标公司ID
+]
+
+
+DomainEvent("UserCreateEvt")[
+    用户注册
+    --
+    用户ID
+]
+
+DomainEvent("UserDeletedEvt")[
+    用户注销
+    --
+    用户ID
+]
+
+DomainEvent("UserUpdateInfo")[
+    用户更新个人信息
+    --
+    用户ID
+]
+
+DomainEvent("UserUpdateSecurityInfoEvt")[
+    用户更新安全信息成功
+    --
+    用户ID
+    --
+    当前登录成功的需要置为黑名单
+]
+
+DomainEvent("UserDepartmentTransferredEvt")[
+    用户部门调动
+    --
+    用户ID
+    源公司ID
+    目标公司ID
+]
+
+Command("UpdateCompanyPolicyCommand")[
+    更新公司政策
+    --
+    公司ID
+]
+
+User -down-> UpdateCompanyPolicyCommand
+
+UpdateCompanyPolicyCommand -down-> CompanyAggregate
+
+Command("UserDepartmentTransferredCommand")[
+    用户部门调动
+    --
+    用户ID
+    源公司ID
+    目标公司ID
+]
+User -down-> UserDepartmentTransferredCommand
+
+DomainEvent("CompanyCreateEvt")[
+    公司注册
+    --
+    公司ID
+]
+
+DomainEvent("SubsidiaryCreatedEvt")[
+    子公司创建
+    --
+    母公司ID
+    子公司ID
+]
+
+
+
+DomainEvent("CompanyMergerCompletedEvt")[
+    公司合并
+    --
+    母公司ID
+    被合并公司ID
+    --
+    处理用户、角色和权限的迁移
+]
+
+Command("CompanyMergerCompletedCommand")[
+    公司合并
+    --
+    母公司ID
+    被合并公司ID
+    --
+    1. 需要两个领导人都是公司的领导
+]
+
+User -down-> CompanyMergerCompletedCommand
+
+DomainEvent("BulkRoleAssignmentCompletedEvt")[
+    批量角色分配
+    --
+    角色ID
+    用户ID列表
+    --
+    针对部门或群组的批量操作
+]
+
+DomainEvent("RoleAssignmentApprovalRequested")[
+    角色分配审批请求事件
+    --
+    角色ID
+    用户ID
+    上级ID
+    --
+    需要通知上级用户审批的角色分配
+]
+
+DomainEvent("RoleAssignmentApprovalPassEvt")[
+    角色分配审批通过
+    --
+    角色ID
+    用户ID
+    上级ID
+    --
+    通知对应的用户
+]
+
+DomainEvent("RoleAssignmentApprovalRejectEvt")[
+    角色分配审批拒绝
+    --
+    角色ID
+    用户ID
+    上级ID
+    --
+    通知对应的用户
+]
+RoleAggregate -down->RoleAssignmentApprovalRejectEvt
+RoleAggregate -down->RoleAssignmentApprovalPassEvt
+
+Command("RoleAssignmentApprovalRequestedCommand")[
+    角色分配审批请求
+    --
+    角色ID
+    用户ID
+    上级ID
+    --
+    需要上级用户审批的角色分配
+]
+
+User -down-> RoleAssignmentApprovalRequestedCommand
+RoleAssignmentApprovalRequestedCommand -down-> RoleAggregate
+
+
+DomainEvent("PermissionGrantApprovedPassEvt")[
+    权限分配审批通过事件
+    --
+    权限ID
+]
+
+DomainEvent("PermissionGrantApprovedRejectEvt")[
+    权限分配审批拒绝事件
+    --
+    权限ID
+]
+
+Command("UserNotificationSend")[
+    用户通知已发送
+    --
+    用户ID
+]
+
+DomainEvent("CompanyWidePolicyUpdatedEvt")[
+    公司范围内政策更新
+    --
+    公司ID
+]
+
+DomainEvent("OrphanedUserDetectedEvt")[
+    检测到游离用户
+    --
+    用户ID
+    公司ID
+    --
+    未关联公司或角色的用户清理事件
+]
+
+
+Command("OrphanedUserDetectedCommand")[
+    检测到游离用户
+    --
+    用户ID
+    公司ID
+]
+Timer -down-> OrphanedUserDetectedCommand
+OrphanedUserDetectedCommand -down-> SystemAggregate
+
+DomainEvent("DataBackupCompleted")[
+    系统维护的关键节点记录
+    --
+    公司ID
+]
+
+Command("DataBackupCommand")[
+    数据备份
+    --
+    公司ID
+]
+Timer -down-> DataBackupCommand
+DataBackupCommand -down-> SystemAggregate
+
+DomainEvent("UserPromotedEvt")[
+    用户晋升
+    --
+    用户ID
+    公司ID
+    --
+    用户直接加入新部门
+]
+Command(UserPromotedCommand)[
+    用户晋升
+    --
+    用户ID
+    公司ID
+    --
+    用户获得这个公司的领导权
+    1. 操作人需要有权限晋升权限
+    2. 这个用户不能是领导
+
+]
+Command(UserDowngradeCommand)[
+    用户降级
+    --
+    用户ID
+    公司ID
+    --
+    取消这个用户领导权
+    1. 操作人需要有权限降级
+    2. 这个用户需要是领导
+]
+User -down-> UserDowngradeCommand
+User -down-> UserPromotedCommand
+UserPromotedCommand -down-> RoleAggregate
+UserDowngradeCommand -down-> RoleAggregate
+
+
+DomainEvent("CompanyProfileUpdateEvt")[
+    公司信息更新
+    --
+    公司ID
+]
+
+DomainEvent("CompanyDeletedEvt")[
+    公司注销
+    --
+    公司ID
+]
+
+
+DomainEvent("UserJoinCompanyPassEvt")[
+    用户成功加入公司事件
+    --
+    用户ID
+    目标公司ID
+]
+
+
+DomainEvent("UserJoinCompanyRejectEvt")[
+    用户加入公司被拒事件
+    --
+    用户ID
+    目标公司ID
+]
+
+DomainEvent("UserApplyJoinCompanyEvt")[
+    用户申请加入公司
+    --
+    用户ID
+    目标公司ID
+]
+
+Command("UserApprovalJoinCompanyCommand")[
+    加入公司审批列表
+    --
+    用户ID
+    目标公司ID
+]
+
+
+
+Command("AutoApprovalJoinCompanyCommand")[
+    自动审批加入公司
+    --
+    用户ID
+    目标公司ID
+]
+
+Command("UserSubmitJoinCompanyCommand")[
+    用户提交加入公司申请
+    --
+    用户ID
+    目标公司ID
+    (optional)邀请码
+]
+
+
+User -down->UserSubmitJoinCompanyCommand
+CompanyAggregate -down-> UserJoinCompanyRejectEvt
+
+
+UserSubmitJoinCompanyCommand -down-> CompanyService
+CompanyService -down-> UserApprovalJoinCompanyCommand
+CompanyService -down-> AutoApprovalJoinCompanyCommand
+
+User -down-> UserApprovalJoinCompanyCommand
+UserApprovalJoinCompanyCommand -down-> CompanyAggregate
+AutoApprovalJoinCompanyCommand -down-> CompanyAggregate
+
+
+DomainEvent("UserSubmitQuitCompanyEvt")[
+    用户退出公司事件
+    --
+    用户ID
+    目标公司ID
+]
+
+Command("UserSubmitQuitCompanyCommand")[
+    用户退出公司
+    --
+    用户ID
+    源公司ID
+]
+User -down-> UserSubmitQuitCompanyCommand
+
+Command("AutoApprovalQuitCompanyCommand")[
+    用户自动退出公司
+    --
+    用户ID
+    源公司ID
+]
+
+AutoApprovalQuitCompanyCommand -down-> CompanyAggregate
+
+
+Command("UserQuitCompanyApprovalCommand")[
+    用户退出公司审批
+    --
+    用户ID
+    源公司ID
+]
+
+User -down-> UserQuitCompanyApprovalCommand
+
+
+DomainEvent("UserQuitCompanyApprovalEvt")[
+    用户退出公司审批事件
+    --
+    用户ID
+    源公司ID
+]
+
+Policy("UserQuitCompanyPolicy")[
+    用户退出公司策略
+    --
+    用户ID
+    源公司ID
+]
+
+CompanyAggregate -down-> UserQuitCompanyApprovalEvt
+CompanyAggregate -down-> UserSubmitQuitCompanyEvt
+
+
+UserSubmitQuitCompanyEvt -down-> UserQuitCompanyPolicy
+UserQuitCompanyPolicy -down-> UserApprovalQuitCompanyCommand
+UserApprovalQuitCompanyCommand -down-> CompanyAggregate
+UserQuitCompanyPolicy -down-> AutoApprovalQuitCompanyCommand
+DomainEvent("UserQuitCompanyPassEvt")[
+    用户退出公司成功
+    --
+    用户ID
+    源公司ID
+]
+
+DomainEvent("UserQuitCompanyRejectEvt")[
+    用户退出公司被拒绝
+    --
+    用户ID
+    源公司ID
+]
+
+DomainEvent("CompanyDeactivatesUserEvt")[
+    用户账号被公司停用
+    --
+    用户ID
+    源公司ID
+]
+
+DomainEvent("CompanyActivateUserEvt")[
+    用户账号被激活
+    --
+    用户ID
+    公司ID
+]
+
+DomainEvent("RoleCreateEvt")[
+    角色创建
+    --
+    公司ID
+    角色ID
+]
+
+DomainEvent("RoleDeletedEvt")[
+    角色删除
+    --
+    公司ID
+    角色ID
+]
+
+DomainEvent("PermissionCreate")[
+    权限创建
+    --
+    权限ID
+]
+
+DomainEvent("PermissionDestroyEvt")[
+    权限删除
+    --
+    权限ID
+]
+
+DomainEvent("PermissionUpdateEvt")[
+    权限更新
+    --
+    权限ID
+]
+Command("PermissionUpdateCommand")[
+    权限更新
+    --
+    权限ID
+]
+System -down-> PermissionUpdateCommand
+PermissionUpdateCommand -down-> PermissionAggregate
+
+DomainEvent("PermissionGrantedCompanyEvt")[
+    权限赋予公司
+    --
+    权限ID
+    公司ID
+]
+
+
+
+DomainEvent("UserAssignedCompanyLeaderEvt")[
+    公司指定负责人
+    --
+    用户ID
+    公司ID
+]
+
+DomainEvent("CompanyChangeLeader")[
+    公司改变负责人
+    --
+    公司ID
+    源用户ID
+    目标用户ID
+]
+
+DomainEvent("PermissionGrantedRoleEvt")[
+    权限赋予角色
+    --
+    权限ID
+    角色ID
+    --
+    该公司具有这个权限才能将此权限授予该角色，该角色是该公司的
+]
+
+DomainEvent("PermissionRevokeRoleEvt")[
+    权限从角色收回
+    --
+    权限ID
+    角色ID
+]
+
+Command("PermissionRevokeRoleCommand")[
+    权限收回角色
+    --
+    权限ID
+    角色ID
+]
+
+User -down-> PermissionRevokeRoleCommand
+PermissionRevokeRoleCommand -down-> PermissionAggregate
+
+DomainEvent("RoleAssignedUserEvt")[
+    角色赋予用户
+    --
+    角色ID
+    用户ID
+]
+DomainEvent("RoleRevokeUser")[
+    从用户收回角色
+    --
+    角色ID
+    用户ID
+]
+
+
+Command("UserLoginCommand")[
+    用户登录
+    --
+    用户名
+    密码
+]
+
+Command("UserLogoutCommand")[
+    用户登出
+    --
+    access_token
+]
+
+DomainEvent("MultiFactorAuthenticationEnabled")[
+    多因素认证启用
+    --
+    用户ID
+    启用类型
+]
+DomainEvent("MultiFactorAuthenticationDisabled")[
+    多因素认证禁用
+    --
+    用户ID
+]
+
+DomainEvent("AnomalousLoginPatternDetected")[
+    异常登录模式检测到
+    --
+    用户ID
+    登录时间
+    登录地点
+]
+
+Policy("UserLoginFailedPolicy")[
+    用户登录失败策略
+    --
+    失败次数阈值
+]
+
+
+Aggregate("UserAggregate")[
+    用户聚合
+    --
+    用户ID
+    用户名
+    密码
+    邮箱
+    手机号
+    状态
+    --
+]
+
+
+
+Service("UserLoginService")[
+    用户登录服务
+    --
+    1. 检查用户是否存在
+    2. 检查密码是否正确
+    3. 检查是否需要多因素认证
+    4. 检查是否被锁定
+    5. 记录登录尝试次数
+    6. 返回登录结果
+]
+
+Command("LockUserCommand")[
+    锁定用户账号
+    --
+    用户ID
+]
+
+
+DomainEvent("ThirdPartyAuthSuccessEvt")[
+    第三方认证成功
+    --
+    用户ID
+    第三方ID
+]
+
+DomainEvent("ThirdPartyAuthFailedEvt")[
+    第三方认证失败
+    --
+    用户ID
+    第三方ID
+]
+
+DomainEvent("ThirdPartyRevokeAuthEvt")[
+    第三方解绑
+    --
+    用户ID
+    第三方ID
+]
+
+
+Command("RoleCreateCommand")[
+    创建角色
+    --
+    角色ID
+    公司ID
+    --
+    1. 角色ID唯一
+    2. 需要有权限创建新的角色
+]
+
+Command("RoleDeleteCommand")[
+    删除角色
+    --
+    角色ID
+    --
+    2. 需要有权限删除角色
+]
+
+Command("PermissionGrantedRoleCommand")[
+    授予角色权限
+    --
+    权限ID
+    角色ID
+    --
+    1. 需要有权限授予角色
+]
+
+User -down-> PermissionGrantedRoleCommand
+PermissionGrantedRoleCommand -down-> RoleAggregate
+Command("SubsidiaryCreatedAndAssignmentLeaderCommand")[
+    创建子公司并指定负责人
+    --
+    (require))母公司ID
+    子公司信息
+]
+
+
+
+
+
+User -down-> SubsidiaryCreatedAndAssignmentLeaderCommand
+SubsidiaryCreatedAndAssignmentLeaderCommand -down-> CompanyService
+
+
+Command("RegisterUserAndCompanyCommand")[
+    创建用户
+    --
+    (require)\t 用户名
+    (require)\t 密码
+    (optional)\t 邮箱
+    (optional)\t 手机号
+]
+
+Command("GenerateQrCodeCommand")[
+    生成二维码
+    --
+    用户ID
+    二维码内容
+]
+
+Command("UserAssignedCompanyLeaderCommand")[
+    公司指定负责人
+    --
+    用户ID
+    公司ID
+]
+
+System -down-> UserAssignedCompanyLeaderCommand
+
+
+User -down-> RegisterUserAndCompanyCommand
+
+Command("UserDeletedCommand")[
+    用户注销
+    --
+    用户ID
+]
+
+User -down-> UserDeletedCommand
+
+
+
+
+Command("UserBindThirdPartyCommand")[
+    用户绑定第三方认证
+    --
+    用户ID
+    第三方ID
+]
+
+Command("UserUnBindThirdPartyCommand")[
+    用户解绑第三方认证
+    --
+    用户ID
+    第三方ID
+]
+
+Command("UserUpdateInfoCommand")[
+    用户更新基础信息
+    --
+    用户ID
+    基础信息
+]
+
+
+
+
+
+User -down-> RoleDeleteCommand
+
+DomainEvent("GeneratedAccessToken")[
+    生成AccessToken
+    --
+    用户ID
+]
+
+
+
+DomainEvent("GeneratedRefreshToken")[
+    生成RefreshToken
+    --
+    用户ID
+]
+
+
+
+DomainEvent("TokenRefreshed")[
+    刷新Token
+    --
+    用户ID
+]
+
+DomainEvent("RefreshTokenInvalidationEvt")[
+    刷新Token失效
+    --
+    用户ID
+]
+
+Command("BulkRoleAssignmentCompletedCommand")[
+    批量角色分配
+    --
+    角色ID
+    用户ID列表
+]
+
+User -down-> BulkRoleAssignmentCompletedCommand
+RoleCreateCommand -down-> RoleAggregate
+RoleDeleteCommand -down-> RoleAggregate
+BulkRoleAssignmentCompletedCommand -down-> RoleAggregate
+Aggregate("AuthAggregate")[
+    认证聚合
+    --
+    用户ID
+    access_token
+    refresh_token
+]
+
+Command("CompanyCreateAndAssignmentLeaderCommand")[
+    创建公司并指定负责人
+    --
+    公司ID
+    用户ID
+]
+
+Command("CompanyCreateCommand")[
+    创建公司
+    --
+    公司ID
+]
+
+Command("AssignmentLeaderCommand")[
+    指定负责人
+    --
+    用户ID
+    公司ID
+]
+
+User -down-> AssignmentLeaderCommand
+CompanyService -down-> CompanyCreateCommand
+CompanyService -down-> AssignmentLeaderCommand
+CompanyCreateCommand -down-> CompanyAggregate
+AssignmentLeaderCommand -down-> CompanyAggregate
+
+UserCreateEvt -down-> CompanyCreateAndAssignmentLeaderCommand
+
+CompanyCreateAndAssignmentLeaderCommand -down-> CompanyService
+
+AuthAggregate -down-> GeneratedAccessToken
+AuthAggregate -down-> TokenRefreshed
+AuthAggregate -down-> GeneratedRefreshToken
+AuthAggregate -down-> RefreshTokenInvalidationEvt
+User -down-> UserLoginCommand
+User -down-> UserLogoutCommand
+UserLoginAttemptFailed -down-> UserLoginFailedPolicy
+UserLoginFailedPolicy -down->LockUserCommand
+LockUserCommand -down-> UserAggregate
+UserAggregate -down-> UserLockedDueToFailedAttemptsEvt
+UserLoginCommand -down-> UserLoginService
+UserLogoutCommand -down-> AuthAggregate
+UserLoginService -down-> AuthAggregate
+UserAggregate -down-> AnomalousLoginPatternDetected
+RegisterUserAndCompanyCommand -down-> UserAggregate
+UserAggregate -down-> UserCreateEvt
+UserAggregate -down-> UserLoginAttemptFailed
+UserAggregate -down-> UserDeletedEvt
+UserAggregate -down-> UserUpdateInfo
+UserAggregate -down-> UserUpdateSecurityInfoEvt
+UserAggregate -down-> UserUnlockedByAdminEvt
+UnlockUserCommand -down-> UserAggregate
+UserAggregate -down-> ThirdPartyAuthSuccessEvt
+UserAggregate -down-> ThirdPartyAuthFailedEvt
+UserAggregate -down-> ThirdPartyRevokeAuthEvt
+UserAggregate -down-> UserPromotedEvt
+UserAggregate -down-> UserDepartmentTransferredEvt
+UserAggregate -down-> MultiFactorAuthenticationEnabled
+UserAggregate -down-> MultiFactorAuthenticationDisabled
+UserDeletedCommand -down-> UserAggregate
+CompanyAggregate -down-> CompanyCreateEvt
+CompanyAggregate -down-> CompanyDeletedEvt
+CompanyAggregate -down->CompanyMergerCompletedEvt
+CompanyAggregate -down-> SubsidiaryCreatedEvt
+CompanyAggregate -down-> CompanyProfileUpdateEvt
+CompanyAggregate -down-> UserAssignedCompanyLeaderEvt
+CompanyAggregate -down-> CompanyChangeLeader
+CompanyAggregate -down-> UserApplyJoinCompanyEvt
+CompanyAggregate -down-> UserJoinCompanyPassEvt
+CompanyAggregate -down-> UserQuitCompanyPassEvt
+CompanyAggregate -down-> UserQuitCompanyRejectEvt
+CompanyAggregate -down-> CompanyDeactivatesUserEvt
+CompanyAggregate -down-> CompanyActivateUserEvt
+RoleAggregate -down-> RoleCreateEvt
+RoleAggregate -down-> RoleDeletedEvt
+RoleAggregate -down-> RoleAssignedUserEvt
+RoleAggregate -down-> RoleRevokeUser
+RoleAggregate -down-> BulkRoleAssignmentCompletedEvt
+RoleAggregate -down-> PermissionGrantedRoleEvt
+RoleAggregate -down-> PermissionRevokeRoleEvt
+RoleAggregate -down-> RoleAssignmentApprovalRequested
+UserBindThirdPartyCommand -down-> UserAggregate
+UserUnBindThirdPartyCommand -down-> UserAggregate
+UserUpdateInfoCommand -down-> UserAggregate
+User -down-> RoleCreateCommand
+
+
+PermissionAggregate -down-> PermissionCreate
+PermissionAggregate -down-> PermissionDestroyEvt
+PermissionAggregate -down-> PermissionUpdateEvt
+PermissionAggregate -down-> PermissionGrantedCompanyEvt
+
+Policy("PermissionPolicy")[
+    权限策略
+    --
+    权限ID
+]
+PermissionGrantedRoleEvt -down-> PermissionPolicy
+PermissionUpdateEvt -down-> PermissionPolicy
+PermissionDestroyEvt -down-> PermissionPolicy
+PermissionRevokeRoleEvt -down-> PermissionPolicy
+BulkRoleAssignmentCompletedEvt -down-> PermissionPolicy
+
+Command("AccessTokenInvalidationCommand")[
+    AccessToken失效
+    --
+    (require)  \t 类型
+    (optional) \t jti
+    (optional) \t 集合用户ID
+    --
+    1. 通过jti失效
+    2. 通过用户ID集合失效
+]
+
+Command("UserAuthorizesAnotherUserRoleCommand")[
+    用户授权另一个用户
+    --
+    用户ID
+    授权用户ID
+    角色ID
+    --
+   根据权限授予策略检测该用户是否有权限授权该角色
+
+]
+
+User -down-> UserAuthorizesAnotherUserRoleCommand
+
+
+UserAuthorizesAnotherUserRoleCommand -down-> RoleAggregate
+
+
+
+PermissionPolicy -down-> AccessTokenInvalidationCommand
+
+
+AccessTokenInvalidationCommand -down-> AuthAggregate
+
+DomainEvent("AccessTokenInvalidationEvt")[
+    AccessToken失效
+    --
+    用户ID
+]
+
+AuthAggregate -down-> AccessTokenInvalidationEvt
+
+Command("PermissionDestroyCommand")[
+    删除权限
+    --
+    权限ID
+]
+
+
+Command("PermissionUpdateEvtCommand")[
+    删除权限
+    --
+    权限ID
+]
+
+
+
+Command("PermissionGrantedCompanyCommand")[
+    授予公司权限
+    --
+    权限ID
+]
+
+
+
+
+System -down-> PermissionDestroyCommand
+PermissionDestroyCommand -down-> PermissionAggregate
+
+
+System -down-> PermissionUpdateEvtCommand
+PermissionUpdateEvtCommand -down-> PermissionAggregate
+
+
+System -down-> PermissionGrantedCompanyCommand
+PermissionGrantedCompanyCommand -down-> PermissionAggregate
+
+
+
+Aggregate("ApprovalRequestAggregate")[
+    审批请求
+    --
+    请求ID
+    角色ID
+    用户ID
+    上级ID
+]
+
+DomainEvent("AuthorizationRequiredEvt")[
+    需要授权
+    --
+    用户ID
+    平台ID
+]
+
+Command("AuthorizationRequiredCommand")[
+    需要授权
+    --
+    用户ID
+    平台ID
+]
+
+User -down-> AuthorizationRequiredCommand
+
+AuthorizationRequiredCommand -down-> ApprovalRequestAggregate
+
+AuthAggregate -down-> AuthorizationRequiredEvt
+
+ApprovalRequestAggregate -down-> PermissionGrantApprovedPassEvt
+ApprovalRequestAggregate -down-> PermissionGrantApprovedRejectEvt
+
+
+Command("PermissionCreateCommand")[
+    创建权限
+    --
+    权限ID
+]
+
+
+System -down-> PermissionCreateCommand
+PermissionCreateCommand -down->PermissionAggregate
+System -down-> UserNotificationSend
+SystemAggregate -down-> DataBackupCompleted
+UserNotificationSend  -down-> SystemAggregate
+CompanyAggregate -down-> CompanyWidePolicyUpdatedEvt
+SystemAggregate -down-> OrphanedUserDetectedEvt
+
+Command("BuyPermissionsCommand")[
+    购买权限
+    --
+    权限ID集合
+    生效时间
+    失效时间
+]
+
+User -down-> BuyPermissionsCommand
+BuyPermissionsCommand -down-> PermissionAggregate
+
+ReadModel("UserPermissionReadModel")[
+   用户权限读模型
+    --
+   用户ID
+   公司ID
+   权限ID
+   生效时间
+   失效时间
+]
+
+PermissionRevokeRoleEvt -down-> UserPermissionReadModel
+PermissionGrantedRoleEvt -down-> UserPermissionReadModel
+
+Command("CompanyDeleteCommand")[
+    删除公司
+    --
+    公司ID
+]
+System -down-> CompanyDeleteCommand
+CompanyDeleteCommand -down-> CompanyAggregate
+CompanyAggregate -down-> CompanyDeletedEvt
+
+Command("EnableMFACommand")[
+    启用多因素认证
+    --
+    用户ID
+    启用类型
+]
+User -down-> EnableMFACommand
+EnableMFACommand -down-> UserAggregate
+UserAggregate -down-> MultiFactorAuthenticationEnabled
+
+DomainEvent("CompanyPolicyAppliedEvt")[
+    公司政策生效
+    --
+    公司ID
+    政策版本
+]
+UpdateCompanyPolicyCommand -down-> CompanyPolicyAppliedEvt
+
+
+
+
+@enduml
+

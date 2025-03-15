@@ -4,9 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="dd56be31-ae55-47cf-b3e7-dee9bdbdad40" name="更改" comment="feat: 修订k8s教程">
+    <list default="true" id="dd56be31-ae55-47cf-b3e7-dee9bdbdad40" name="更改" comment="feat: 添加认证系统设计">
+      <change afterPath="$PROJECT_DIR$/系统设计/auth/领域设计.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vitepress/utils/auto_gen_sidebar.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/.vitepress/utils/auto_gen_sidebar.mjs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/系统设计/auth/index.md" beforeDir="false" afterPath="$PROJECT_DIR$/系统设计/auth/index.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,6 +19,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="UML Use Case" />
+        <option value="UML Object" />
       </list>
     </option>
   </component>
@@ -33,7 +36,7 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
-    &quot;DefaultPlantUmlFileTemplate&quot;: &quot;UML Use Case&quot;,
+    &quot;DefaultPlantUmlFileTemplate&quot;: &quot;UML Object&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
@@ -56,6 +59,21 @@
       <recent name="$PROJECT_DIR$/security/sql" />
       <recent name="$PROJECT_DIR$" />
     </key>
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="mhr-app-docs" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="mhr-app-docs" />
+      <option name="filePath" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -82,6 +100,8 @@
       <workItem from="1736272289870" duration="18000" />
       <workItem from="1736613779510" duration="656000" />
       <workItem from="1736619547188" duration="680000" />
+      <workItem from="1742044195232" duration="11355000" />
+      <workItem from="1742102767100" duration="14568000" />
     </task>
     <task id="LOCAL-00001" summary="docs: 初始化文档">
       <option name="closed" value="true" />
@@ -99,7 +119,23 @@
       <option name="project" value="LOCAL" />
       <updated>1741539584436</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="feat: 添加认证系统设计">
+      <option name="closed" value="true" />
+      <created>1742067072825</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1742067072825</updated>
+    </task>
+    <task id="LOCAL-00004" summary="feat: 添加认证系统设计">
+      <option name="closed" value="true" />
+      <created>1742123194001</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1742123194001</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -108,6 +144,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="docs: 初始化文档" />
     <MESSAGE value="feat: 修订k8s教程" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: 修订k8s教程" />
+    <MESSAGE value="feat: 添加认证系统设计" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: 添加认证系统设计" />
   </component>
 </project>
